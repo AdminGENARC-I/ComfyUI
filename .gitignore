@@ -21,3 +21,8 @@ venv/
 *.log
 web_custom_versions/
 .DS_Store
+*.txt
+*.deb*
+.venv/*
+*mycreds.txt*
+*client_secrets.json*
