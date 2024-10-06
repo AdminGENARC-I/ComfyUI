@@ -50,7 +50,6 @@ def execute_prestartup_script():
 
 execute_prestartup_script()
 
-
 # Main code
 import asyncio
 import itertools
@@ -62,18 +61,7 @@ import logging
 
 if os.name == "nt":
     logging.getLogger("xformers").addFilter(lambda record: 'A matching Triton is not available' not in record.getMessage())
-
-if __name__ == "__main__":
-    if args.cuda_device is not None:
-        os.environ['CUDA_VISIBLE_DEVICES'] = str(args.cuda_device)
-        logging.info("Set cuda device to: {}".format(args.cuda_device))
-
-    if args.deterministic:
-        if 'CUBLAS_WORKSPACE_CONFIG' not in os.environ:
-            os.environ['CUBLAS_WORKSPACE_CONFIG'] = ":4096:8"
-
-    import cuda_malloc
-
+    
 if args.windows_standalone_build:
     try:
         import fix_torch
@@ -196,8 +184,17 @@ def load_extra_path_config(yaml_path):
                 logging.info("Adding extra search path {} {}".format(x, full_path))
                 folder_paths.add_model_folder_path(x, full_path)
 
+def main():
+    if args.cuda_device is not None:
+        os.environ['CUDA_VISIBLE_DEVICES'] = str(args.cuda_device)
+        logging.info("Set cuda device to: {}".format(args.cuda_device))
 
-if __name__ == "__main__":
+    if args.deterministic:
+        if 'CUBLAS_WORKSPACE_CONFIG' not in os.environ:
+            os.environ['CUBLAS_WORKSPACE_CONFIG'] = ":4096:8"
+
+    import cuda_malloc
+    
     if args.temp_directory:
         temp_dir = os.path.join(os.path.abspath(args.temp_directory), "temp")
         logging.info(f"Setting temp directory to: {temp_dir}")
@@ -213,8 +210,8 @@ if __name__ == "__main__":
 
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
-    server = server.PromptServer(loop)
-    q = execution.PromptQueue(server)
+    currentServer = server.PromptServer(loop)
+    q = execution.PromptQueue(currentServer)
 
     extra_model_paths_config_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "extra_model_paths.yaml")
     if os.path.isfile(extra_model_paths_config_path):
@@ -228,10 +225,10 @@ if __name__ == "__main__":
 
     cuda_malloc_warning()
 
-    server.add_routes()
-    hijack_progress(server)
+    currentServer.add_routes()
+    hijack_progress(currentServer)
 
-    threading.Thread(target=prompt_worker, daemon=True, args=(q, server,)).start()
+    threading.Thread(target=prompt_worker, daemon=True, args=(q, currentServer,)).start()
 
     if args.output_directory:
         output_dir = os.path.abspath(args.output_directory)
@@ -261,8 +258,11 @@ if __name__ == "__main__":
         call_on_start = startup_server
 
     try:
-        loop.run_until_complete(run(server, address=args.listen, port=args.port, verbose=not args.dont_print_server, call_on_start=call_on_start))
+        loop.run_until_complete(run(currentServer, address=args.listen, port=args.port, verbose=not args.dont_print_server, call_on_start=call_on_start))
     except KeyboardInterrupt:
         logging.info("\nStopped server")
 
     cleanup_temp()
+
+if __name__ == "__main__":
+    main()
