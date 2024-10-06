@@ -1,7 +1,7 @@
 import os
 import threading
 import csv
-from flask import Flask, request
+from flask import Flask, request, make_response
 import nest_asyncio
 
 from comfy_api_simplified import ComfyApiWrapper, ComfyWorkflowWrapper
@@ -35,7 +35,9 @@ class FlaskServer:
             userNumber = request.args.get('usernumber')
             sketchImage = request.files['sketch']
             if self.validate_user(userName, userNumber):
-                self.generate_image(sketchImage)
+                return self.generate_image(sketchImage)
+            
+            return "No such user exists!"
 
     def parse_user_credentials(self, filePath: str):
         try:
@@ -58,9 +60,13 @@ class FlaskServer:
         workflow.set_node_param("positive", "text", "a beautiful townhouse")
         
         results = self.api.queue_and_wait_images(workflow, output_node_title="Save Image")
-        for file_name, image_data in results.items():
-            with open("{}".format(file_name), "wb+") as file:
-                file.write(image_data)
+        for image_name, image_data in results.items():
+            response = make_response(image_data)
+            response.headers.set('Content-Type', 'image/jpeg')
+            response.headers.set('Content-Disposition', 'attachment', filename='%s.jpg' % image_name)
+            return response
+        
+        return "No generated image!"
     
 if __name__ == "__main__":
     nest_asyncio.apply()
