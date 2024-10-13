@@ -34,8 +34,9 @@ class FlaskServer:
             userName = request.args.get('username')
             userNumber = request.args.get('usernumber')
             sketchImage = request.files['sketch']
+            sketchDescription = request.form['description']
             if self.validate_user(userName, userNumber):
-                return self.generate_image(sketchImage)
+                return self.generate_image(sketchImage, sketchDescription)
             
             return "No such user exists!"
 
@@ -55,9 +56,9 @@ class FlaskServer:
         
         return False
     
-    def generate_image(self, sketchImage):
+    def generate_image(self, sketchImage, sketchDescription):
         workflow = ComfyWorkflowWrapper(FlaskServer.LOCAL_CONFIG_PATH)
-        workflow.set_node_param("positive", "text", "a beautiful townhouse")
+        workflow.set_node_param("positive", "text", sketchDescription)
         
         results = self.api.queue_and_wait_images(workflow, output_node_title="Save Image")
         for image_name, image_data in results.items():
