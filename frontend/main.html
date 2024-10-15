@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ComfyUI İstek Gönder</title>
+</head>
+<body>
+    <h1>ComfyUI İstek Gönder</h1>
+
+    <!-- Kullanıcı Bilgileri -->
+    <label for="username">Kullanıcı Adı:</label><br>
+    <input type="text" id="username" placeholder="Kullanıcı Adı"><br><br>
+
+    <!-- Subregion Dropdown -->
+    <label for="subregion">Subregion Seçin:</label><br>
+    <select id="subregion">
+        <option value="Europe">Europe</option>
+        <option value="North America">North America</option>
+        <option value="Asia">Asia</option>
+        <option value="South America">South America</option>
+        <option value="Africa">Africa</option>
+        <option value="Oceania">Oceania</option>
+        <option value="Middle East">Middle East</option>
+        <option value="Central America">Central America</option>
+        <option value="Caribbean">Caribbean</option>
+        <option value="Antarctica">Antarctica</option>
+    </select>
+    <br><br>
+
+    <!-- Famous Architects Dropdown -->
+    <label for="architects">Ünlü Bir Mimar Seçin:</label><br>
+    <select id="architects">
+        <option value="Frank Lloyd Wright">Frank Lloyd Wright</option>
+        <option value="Zaha Hadid">Zaha Hadid</option>
+        <option value="Le Corbusier">Le Corbusier</option>
+        <option value="Ludwig Mies van der Rohe">Ludwig Mies van der Rohe</option>
+        <option value="Frank Gehry">Frank Gehry</option>
+        <option value="Santiago Calatrava">Santiago Calatrava</option>
+        <option value="Rem Koolhaas">Rem Koolhaas</option>
+        <option value="Norman Foster">Norman Foster</option>
+        <option value="I. M. Pei">I. M. Pei</option>
+        <option value="Tadao Ando">Tadao Ando</option>
+    </select>
+    <br><br>
+
+    <!-- Resim Yükleme Alanı -->
+    <label for="imageUpload">Bir resim yükleyin (Opsiyonel):</label><br>
+    <input type="file" id="imageUpload" accept="image/*"><br><br>
+
+    <!-- Düzenlenmiş Resim Önizlemesi -->
+    <canvas id="imageCanvas" width="512" height="512" style="border: 1px solid black; display: none;"></canvas><br><br>
+
+    <input type="button" value="Gönder" onclick="sendRequest()">
+
+    <script>
+        let imageLoaded = false;
+
+        // Resim yüklendiğinde işlemi başlat
+        document.getElementById('imageUpload').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                imageLoaded = true;
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const img = new Image();
+                    img.src = e.target.result;
+                    img.onload = function() {
+                        // Canvas'a resmi yükle ve işle
+                        const canvas = document.getElementById('imageCanvas');
+                        const ctx = canvas.getContext('2d');
+
+                        // 512x512 boyutuna küçült
+                        ctx.drawImage(img, 0, 0, 512, 512);
+
+                        // Siyah-beyaz/grayscale formatına çevir
+                        const imageData = ctx.getImageData(0, 0, 512, 512);
+                        const data = imageData.data;
+                        for (let i = 0; i < data.length; i += 4) {
+                            const avg = (data[i] + data[i + 1] + data[i + 2]) / 3;
+                            data[i] = avg;        // Red
+                            data[i + 1] = avg;    // Green
+                            data[i + 2] = avg;    // Blue
+                        }
+                        ctx.putImageData(imageData, 0, 0);
+                    }
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Veriyi POST isteği ile sunucuya gönderme
+        function sendRequest() {
+            const username = document.getElementById('username').value;
+            const subregion = document.getElementById('subregion').value;
+            const architect = document.getElementById('architects').value;
+
+            // Resim base64 formatında alınırsa canvas'tan veriyi al
+            let dataURL = null;
+            if (imageLoaded) {
+                const canvas = document.getElementById('imageCanvas');
+                dataURL = canvas.toDataURL();  // Resmi base64 formatına çevir
+            }
+
+            // JSON formatında veri hazırlama
+            const data = {
+                username: username,
+                selected_subregion: subregion,
+                selected_architect: architect,
+                image: dataURL // Eğer resim yoksa null olarak gönderilecek
+            };
+
+            // Sunucuya gönderme
+            fetch('http://<IP-adresin>:5000/upload-info', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Basic ' + btoa('admin:password')  // Kullanıcı adı ve şifre
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(data => console.log('Success:', data))
+            .catch(error => console.error('Error:', error));
+        }
+    </script>
+</body>
+</html>

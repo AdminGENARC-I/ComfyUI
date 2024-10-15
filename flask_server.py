@@ -3,6 +3,8 @@ import threading
 import csv
 from flask import Flask, request, make_response
 import nest_asyncio
+import gdown
+import shutil
 
 from comfy_api_simplified import ComfyApiWrapper, ComfyWorkflowWrapper
 
@@ -10,7 +12,7 @@ import main
 
 class FlaskServer:
     LOCAL_SERVER_ADDRESS = "http://127.0.0.1:8188/"
-    LOCAL_CONFIG_PATH = "workflows/default.json"
+    LOCAL_CONFIG_PATH = "workflows/adilWorkflow_v0.0.1.json"
     
     def __init__(self, userCredentialsPath: str):
         self.userCredentials = []
@@ -70,6 +72,12 @@ class FlaskServer:
         return "No generated image!"
     
 if __name__ == "__main__":
+    extras = [('https://drive.google.com/uc?id=1LKq_8HblgJYC3iButkOItDM-NsZLETlv', 'realisticVisionV60B1_v51VAE.safetensors', 'models/checkpoints'), 
+              ('https://drive.google.com/uc?id=1-sOYJNuCvRB966m30b604sgWvw-boLJU', 'control_v11p_sd15_lineart_fp16.safetensors', 'models/controlnet')]
+    for extra in extras:
+        gdown.download(extra[0], extra[1], quiet=False)
+        shutil.move("./{}".format(extra[1]), "./{0}/{1}".format(extra[2], extra[1]))
+    
     nest_asyncio.apply()
     
     comfyUiServer = threading.Thread(target=main.main, daemon=True)

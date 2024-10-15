@@ -18,6 +18,7 @@ flask
 websockets
 comfy_api_simplified
 nest_asyncio
+gdown
 
 #non essential dependencies:
 kornia>=0.7.1
