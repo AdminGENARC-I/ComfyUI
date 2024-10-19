@@ -2,6 +2,7 @@ import os
 import threading
 import csv
 from flask import Flask, request, make_response
+from flask_cors import CORS
 import nest_asyncio
 import gdown
 import shutil
@@ -19,6 +20,7 @@ class FlaskServer:
         
         self.api = ComfyApiWrapper(FlaskServer.LOCAL_SERVER_ADDRESS)    
         self.app = Flask("Flask Server")
+        CORS(self.app)
         self.setup_routes()
         self.parse_user_credentials(userCredentialsPath)
         
@@ -37,14 +39,14 @@ class FlaskServer:
         def generateImage():
             result = "No such user exists!"
             
-            userName = request.args.get('username')
-            userNumber = request.args.get('usernumber')
-            sketchImageFile = request.files['sketch']
-            sketchImageFile.save('temp.jpg')
-            sketchImageMetaData = self.api.upload_image('temp.jpg')
-            subregion = request.form['subregion']
-            architect = request.form['architect'] 
-            if self.validate_user(userName, userNumber):
+            userName = request.authorization.get('username')
+            password = request.authorization.get('password')
+            if self.validate_user(userName, password):
+                sketchImageFile = request.files['sketch']
+                sketchImageFile.save('temp.jpg')
+                sketchImageMetaData = self.api.upload_image('temp.jpg')
+                subregion = request.form['subregion']
+                architect = request.form['architect'] 
                 result = self.generate_image(sketchImageMetaData, subregion, architect)
             
             if os.path.exists('./temp.jpg'):
@@ -61,9 +63,9 @@ class FlaskServer:
         except FileNotFoundError:
             print("File {0} not found!".format(filePath))
     
-    def validate_user(self, userName: str, userNumber: str) -> bool:
+    def validate_user(self, userName: str, password: str) -> bool:
         for userCredential in self.userCredentials:
-            if userCredential[0] == userName and userCredential[1] == userNumber:
+            if userCredential[0] == userName and userCredential[1] == password:
                 return True
         
         return False
