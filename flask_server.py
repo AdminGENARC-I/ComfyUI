@@ -22,6 +22,8 @@ class FlaskServer:
         self.setup_routes()
         self.parse_user_credentials(userCredentialsPath)
         
+        self.workflow = ComfyWorkflowWrapper(FlaskServer.LOCAL_CONFIG_PATH)
+        
         self.app.run()
         
         print("Started running flask server...")
@@ -33,14 +35,22 @@ class FlaskServer:
 
         @self.app.route("/generateImage", methods=['POST'])
         def generateImage():
+            result = "No such user exists!"
+            
             userName = request.args.get('username')
             userNumber = request.args.get('usernumber')
-            sketchImage = request.files['sketch']
-            sketchDescription = request.form['description']
+            sketchImageFile = request.files['sketch']
+            sketchImageFile.save('temp.jpg')
+            sketchImageMetaData = self.api.upload_image('temp.jpg')
+            subregion = request.form['subregion']
+            architect = request.form['architect'] 
             if self.validate_user(userName, userNumber):
-                return self.generate_image(sketchImage, sketchDescription)
+                result = self.generate_image(sketchImageMetaData, subregion, architect)
             
-            return "No such user exists!"
+            if os.path.exists('./temp.jpg'):
+                os.remove('./temp.jpg')
+            
+            return result
 
     def parse_user_credentials(self, filePath: str):
         try:
@@ -58,11 +68,12 @@ class FlaskServer:
         
         return False
     
-    def generate_image(self, sketchImage, sketchDescription):
-        workflow = ComfyWorkflowWrapper(FlaskServer.LOCAL_CONFIG_PATH)
-        workflow.set_node_param("positive", "text", sketchDescription)
+    def generate_image(self, sketchImageMetaData, subregion, architect):
+        self.workflow.set_node_param("Load Image", "image", "{0}/{1}".format(sketchImageMetaData['subfolder'], sketchImageMetaData['name']))
+        self.workflow.set_node_param("First Text Prompt", "text", subregion)
+        self.workflow.set_node_param("Second Text Prompt", "text", architect)
         
-        results = self.api.queue_and_wait_images(workflow, output_node_title="Save Image")
+        results = self.api.queue_and_wait_images(self.workflow, output_node_title="Save Image")
         for image_name, image_data in results.items():
             response = make_response(image_data)
             response.headers.set('Content-Type', 'image/jpeg')
@@ -75,8 +86,9 @@ if __name__ == "__main__":
     extras = [('https://drive.google.com/uc?id=1LKq_8HblgJYC3iButkOItDM-NsZLETlv', 'realisticVisionV60B1_v51VAE.safetensors', 'models/checkpoints'), 
               ('https://drive.google.com/uc?id=1-sOYJNuCvRB966m30b604sgWvw-boLJU', 'control_v11p_sd15_lineart_fp16.safetensors', 'models/controlnet')]
     for extra in extras:
-        gdown.download(extra[0], extra[1], quiet=False)
-        shutil.move("./{}".format(extra[1]), "./{0}/{1}".format(extra[2], extra[1]))
+        if not os.path.exists("{0}/{1}".format(extra[2], extra[1])):
+            gdown.download(extra[0], extra[1], quiet=False)
+            shutil.move("./{}".format(extra[1]), "./{0}/{1}".format(extra[2], extra[1]))
     
     nest_asyncio.apply()
     

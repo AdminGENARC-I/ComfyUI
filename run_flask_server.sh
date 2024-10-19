@@ -21,5 +21,9 @@ if ! [ -d "./custom_nodes/ComfyUI-Advanced-ControlNet"]; then
     git clone git@github.com:Kosinkadink/ComfyUI-Advanced-ControlNet.git ./custom_nodes/ComfyUI-Advanced-ControlNet
 fi
 
+if ! [ -d "./custom_nodes/comfyui_controlnet_aux"]; then
+    git clone https://github.com/Fannovel16/comfyui_controlnet_aux.git ./custom_nodes/comfyui_controlnet_aux
+fi
+
 python3 flask_server.py
 deactivate
