@@ -72,7 +72,7 @@ class FlaskServer:
     
     def generate_image(self, sketchImageMetaData, subregion, architect):
         self.workflow.set_node_param("Load Image", "image", "{0}/{1}".format(sketchImageMetaData['subfolder'], sketchImageMetaData['name']))
-        self.workflow.set_node_param("First Text Prompt", "text", "{0}, {1}".format(subregion, architect))
+        self.workflow.set_node_param("First Text Prompt", "text", "{0}, {1}, realistic architectural render".format(subregion, architect))
         
         results = self.api.queue_and_wait_images(self.workflow, output_node_title="Save Image")
         for image_name, image_data in results.items():
