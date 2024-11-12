@@ -3,6 +3,7 @@ import threading
 import csv
 from flask import Flask, request, make_response
 from flask_cors import CORS
+import time
 import nest_asyncio
 import gdown
 import shutil
@@ -14,9 +15,11 @@ import main
 class FlaskServer:
     LOCAL_SERVER_ADDRESS = "http://127.0.0.1:8188/"
     LOCAL_CONFIG_PATH = "workflows/adilWorkflow_v0.0.1.json"
+    USER_COOLDOWN = 300
     
     def __init__(self, userCredentialsPath: str):
         self.userCredentials = []
+        self.userLastRequestTimes = {}
         
         self.api = ComfyApiWrapper(FlaskServer.LOCAL_SERVER_ADDRESS)    
         self.app = Flask("Flask Server")
@@ -42,15 +45,22 @@ class FlaskServer:
             userName = request.authorization.get('username')
             password = request.authorization.get('password')
             if self.validate_user(userName, password):
-                sketchImageFile = request.files['sketch']
-                sketchImageFile.save('temp.jpg')
-                sketchImageMetaData = self.api.upload_image('temp.jpg')
-                subregion = request.form['subregion']
-                architect = request.form['architect'] 
-                result = self.generate_image(sketchImageMetaData, subregion, architect)
-            
-            if os.path.exists('./temp.jpg'):
-                os.remove('./temp.jpg')
+                currentRequestTime = int(time.time())
+                lastRequestTime = 0
+                if self.userLastRequestTimes.get(userName) != None:
+                    lastRequestTime = self.userLastRequestTimes[userName]
+                    
+                if (currentRequestTime - lastRequestTime) > FlaskServer.USER_COOLDOWN:
+                    sketchImageFile = request.files['sketch']
+                    sketchImageFile.save('temp.jpg')
+                    sketchImageMetaData = self.api.upload_image('temp.jpg')
+                    subregion = request.form['subregion']
+                    architect = request.form['architect'] 
+                    result = self.generate_image(sketchImageMetaData, subregion, architect)
+                    if os.path.exists('./temp.jpg'):
+                        os.remove('./temp.jpg')
+                        
+                    self.userLastRequestTimes[userName] = currentRequestTime
             
             return result
 
