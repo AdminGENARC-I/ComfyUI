@@ -136,7 +136,7 @@
             data.append("architect", architect)
             
             try {
-                response = await fetch("http://127.0.0.1:5000/generateImage", {
+                response = await fetch("http://194.27.127.220:80/generateImage", {
                     method: 'POST',
                     headers: {
                         'Authorization': 'Basic ' + btoa(username + ":" + usernumber)
