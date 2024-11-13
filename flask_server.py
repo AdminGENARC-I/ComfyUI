@@ -29,7 +29,7 @@ class FlaskServer:
         
         self.workflow = ComfyWorkflowWrapper(FlaskServer.LOCAL_CONFIG_PATH)
         
-        self.app.run()
+        self.app.run(host='0.0.0.0', port=80)
         
         print("Started running flask server...")
         
