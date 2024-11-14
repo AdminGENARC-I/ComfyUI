@@ -14,7 +14,7 @@ import main
 
 class FlaskServer:
     LOCAL_SERVER_ADDRESS = "http://127.0.0.1:8188/"
-    LOCAL_CONFIG_PATH = "workflows/adilWorkflow_v0.0.1.json"
+    LOCAL_CONFIG_PATH = "workflows/adil_workflow_v1.0.0.json"
     USER_COOLDOWN = 300
     
     def __init__(self, userCredentialsPath: str):
@@ -44,6 +44,8 @@ class FlaskServer:
             
             userName = request.authorization.get('username')
             password = request.authorization.get('password')
+            
+            print("Got request from {} {}".format(userName, password))
             if self.validate_user(userName, password):
                 currentRequestTime = int(time.time())
                 lastRequestTime = 0
@@ -61,6 +63,8 @@ class FlaskServer:
                         os.remove('./temp.jpg')
                         
                     self.userLastRequestTimes[userName] = currentRequestTime
+                else:
+                    result = "You have to wait before making any new requests!"
             
             return result
 
@@ -94,8 +98,11 @@ class FlaskServer:
         return "No generated image!"
     
 if __name__ == "__main__":
-    extras = [('https://drive.google.com/uc?id=1LKq_8HblgJYC3iButkOItDM-NsZLETlv', 'realisticVisionV60B1_v51VAE.safetensors', 'models/checkpoints'), 
-              ('https://drive.google.com/uc?id=1-sOYJNuCvRB966m30b604sgWvw-boLJU', 'control_v11p_sd15_lineart_fp16.safetensors', 'models/controlnet')]
+    extras = [('https://drive.google.com/file/d/1uA9lMI_Wk7Fgj2faHOWkliv-QjDzsP_n', 'realisticVisionV60B1_v51VAE.safetensors', 'models/checkpoints'), 
+              ('https://drive.google.com/uc?id=1-sOYJNuCvRB966m30b604sgWvw-boLJU', 'control_v11p_sd15_lineart_fp16.safetensors', 'models/controlnet'),
+              ('https://drive.google.com/file/d/16S-lSU4dqkGfEc6bub0DpCyjkjkDXi4n', 'control_v11f1p_sd15_depth_fp16.safetensors', 'models/controlnet'),
+              ('https://drive.google.com/file/d/1sbEwhjJD_1jW5LP1IORH4WAi1ICYiZfZ', 'mk.safetensors', 'models/controlnet'),
+              ('https://drive.google.com/file/d/1S4ZEzxxWG4C1pcRK7RvVSr8bQM4ak7q4', 'vae-ft-mse-840000-ema-pruned.ckpt', 'models/checkpoints')]
     for extra in extras:
         if not os.path.exists("{0}/{1}".format(extra[2], extra[1])):
             gdown.download(extra[0], extra[1], quiet=False)
@@ -106,5 +113,5 @@ if __name__ == "__main__":
     comfyUiServer = threading.Thread(target=main.main, daemon=True)
     comfyUiServer.start()
     
-    userCredentialsPath = "exampleUserCredentials.csv" # os.environ.get('USER_CREDENTIALS')
+    userCredentialsPath = os.environ.get('USER_CREDENTIALS')
     app = FlaskServer(userCredentialsPath)
