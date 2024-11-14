@@ -1,7 +1,7 @@
 {
   "4": {
     "inputs": {
-      "ckpt_name": "v1-5-pruned.ckpt"
+      "ckpt_name": "v1-5-pruned-emaonly.ckpt"
     },
     "class_type": "CheckpointLoaderSimple",
     "_meta": {
@@ -43,7 +43,7 @@
   },
   "7": {
     "inputs": {
-      "text": "text, watermark, low quality, anime, drawing, cartoon, drawing, sketch, bad quality, low-res",
+      "text": "realistic architectural photography, high quality, architectural photography, building, building photography, realistic photography, photograph",
       "clip": [
         "18",
         1
@@ -311,32 +311,6 @@
     "class_type": "ControlNetApplyAdvanced",
     "_meta": {
       "title": "Apply ControlNet"
-    }
-  },
-  "46": {
-    "inputs": {
-      "text": "1280",
-      "anything": [
-        "48",
-        0
-      ]
-    },
-    "class_type": "easy showAnything",
-    "_meta": {
-      "title": "Show Any"
-    }
-  },
-  "47": {
-    "inputs": {
-      "text": "720",
-      "anything": [
-        "48",
-        1
-      ]
-    },
-    "class_type": "easy showAnything",
-    "_meta": {
-      "title": "Show Any"
     }
   },
   "48": {

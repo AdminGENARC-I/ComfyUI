@@ -3,6 +3,10 @@
 source .venv/bin/activate
 pip install -r requirements.txt
 
+sudo apt-get install git-lfs
+git lfs install
+git lfs pull
+
 if ! [ -d "./.venv" ]; then
     python3 -m venv .venv 
 fi

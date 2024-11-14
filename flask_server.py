@@ -45,7 +45,7 @@ class FlaskServer:
             userName = request.authorization.get('username')
             password = request.authorization.get('password')
             
-            print("Got request from {} {}".format(userName, password))
+            print("Got request from {},{}".format(userName, password))
             if self.validate_user(userName, password):
                 currentRequestTime = int(time.time())
                 lastRequestTime = 0
@@ -53,16 +53,22 @@ class FlaskServer:
                     lastRequestTime = self.userLastRequestTimes[userName]
                     
                 if (currentRequestTime - lastRequestTime) > FlaskServer.USER_COOLDOWN:
+                    print("Generating image!")
                     sketchImageFile = request.files['sketch']
                     sketchImageFile.save('temp.jpg')
                     sketchImageMetaData = self.api.upload_image('temp.jpg')
+                    imagetype = request.form['imagetype'] 
+                    buildingtype = request.form['buildingtype']
                     subregion = request.form['subregion']
-                    architect = request.form['architect'] 
-                    result = self.generate_image(sketchImageMetaData, subregion, architect)
+                    architect = request.form['architect']
+                    atmosphere = request.form['atmosphere']
+                    ratio = request.form['ratio']
+                    result = self.generate_image(sketchImageMetaData, imagetype, buildingtype, subregion, architect, atmosphere, ratio)
                     if os.path.exists('./temp.jpg'):
                         os.remove('./temp.jpg')
                         
                     self.userLastRequestTimes[userName] = currentRequestTime
+                    print("Generated image!")
                 else:
                     result = "You have to wait before making any new requests!"
             
@@ -84,9 +90,14 @@ class FlaskServer:
         
         return False
     
-    def generate_image(self, sketchImageMetaData, subregion, architect):
+    def generate_image(self, sketchImageMetaData, imagetype, buildingtype, subregion, architect, atmosphere, ratio):        
         self.workflow.set_node_param("Load Image", "image", "{0}/{1}".format(sketchImageMetaData['subfolder'], sketchImageMetaData['name']))
-        self.workflow.set_node_param("First Text Prompt", "text", "{0}, {1}, realistic architectural render".format(subregion, architect))
+        self.workflow.set_node_param("Architectural Prompt Generator", "architect", architect)
+        self.workflow.set_node_param("Architectural Prompt Generator", "region", subregion)
+        self.workflow.set_node_param("Architectural Prompt Generator", "building_type", buildingtype)
+        self.workflow.set_node_param("Architectural Prompt Generator", "interior_exterior", imagetype.lower())
+        self.workflow.set_node_param("Architectural Prompt Generator", "atmosphere", atmosphere)
+        self.workflow.set_node_param("Latent Image Resolution", "aspect_ratio", ratio)
         
         results = self.api.queue_and_wait_images(self.workflow, output_node_title="Save Image")
         for image_name, image_data in results.items():
@@ -99,10 +110,10 @@ class FlaskServer:
     
 if __name__ == "__main__":
     extras = [('https://drive.google.com/file/d/1uA9lMI_Wk7Fgj2faHOWkliv-QjDzsP_n', 'realisticVisionV60B1_v51VAE.safetensors', 'models/checkpoints'), 
-              ('https://drive.google.com/uc?id=1-sOYJNuCvRB966m30b604sgWvw-boLJU', 'control_v11p_sd15_lineart_fp16.safetensors', 'models/controlnet'),
+              ('https://drive.google.com/file/d/1-sOYJNuCvRB966m30b604sgWvw-boLJU', 'control_v11p_sd15_lineart_fp16.safetensors', 'models/controlnet'),
               ('https://drive.google.com/file/d/16S-lSU4dqkGfEc6bub0DpCyjkjkDXi4n', 'control_v11f1p_sd15_depth_fp16.safetensors', 'models/controlnet'),
-              ('https://drive.google.com/file/d/1sbEwhjJD_1jW5LP1IORH4WAi1ICYiZfZ', 'mk.safetensors', 'models/controlnet'),
-              ('https://drive.google.com/file/d/1S4ZEzxxWG4C1pcRK7RvVSr8bQM4ak7q4', 'vae-ft-mse-840000-ema-pruned.ckpt', 'models/checkpoints')]
+              ('https://drive.google.com/file/d/1sbEwhjJD_1jW5LP1IORH4WAi1ICYiZfZ', 'mk.safetensors', 'models/loras'),
+              ('https://drive.google.com/file/d/1S4ZEzxxWG4C1pcRK7RvVSr8bQM4ak7q4', 'vae-ft-mse-840000-ema-pruned.ckpt', 'models/vae')]
     for extra in extras:
         if not os.path.exists("{0}/{1}".format(extra[2], extra[1])):
             gdown.download(extra[0], extra[1], quiet=False)
@@ -113,5 +124,5 @@ if __name__ == "__main__":
     comfyUiServer = threading.Thread(target=main.main, daemon=True)
     comfyUiServer.start()
     
-    userCredentialsPath = os.environ.get('USER_CREDENTIALS')
+    userCredentialsPath = "./exampleUserCredentials.csv" # os.environ.get('USER_CREDENTIALS')
     app = FlaskServer(userCredentialsPath)
