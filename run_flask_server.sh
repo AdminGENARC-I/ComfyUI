@@ -31,5 +31,5 @@ if ! [ -d "./custom_nodes/comfyui_controlnet_aux" ]; then
     git clone https://github.com/Fannovel16/comfyui_controlnet_aux.git ./custom_nodes/comfyui_controlnet_aux
 fi
 
-python3 flask_server.py
+nohup python3 flask_server.py &
 deactivate
