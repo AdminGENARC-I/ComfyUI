@@ -51,8 +51,9 @@ class FlaskServer:
                 lastRequestTime = 0
                 if self.userLastRequestTimes.get(userName) != None:
                     lastRequestTime = self.userLastRequestTimes[userName]
-                    
-                if (currentRequestTime - lastRequestTime) > FlaskServer.USER_COOLDOWN:
+                
+                passedTime = currentRequestTime - lastRequestTime 
+                if passedTime > FlaskServer.USER_COOLDOWN:
                     print("Generating image!")
                     sketchImageFile = request.files['sketch']
                     sketchImageFile.save('temp.jpg')
@@ -70,7 +71,10 @@ class FlaskServer:
                     self.userLastRequestTimes[userName] = currentRequestTime
                     print("Generated image!")
                 else:
-                    result = "You have to wait before making any new requests!"
+                    remainingTime = FlaskServer.USER_COOLDOWN - passedTime
+                    minutes = int(remainingTime // 60)
+                    seconds = int(remainingTime % 60)
+                    result = "You have to wait before making any new requests! Current wait time is {} minutes and {} seconds".format(minutes, seconds)
             
             return result
 
@@ -109,11 +113,11 @@ class FlaskServer:
         return "No generated image!"
     
 if __name__ == "__main__":
-    extras = [('https://drive.google.com/file/d/1uA9lMI_Wk7Fgj2faHOWkliv-QjDzsP_n', 'realisticVisionV60B1_v51VAE.safetensors', 'models/checkpoints'), 
-              ('https://drive.google.com/file/d/1-sOYJNuCvRB966m30b604sgWvw-boLJU', 'control_v11p_sd15_lineart_fp16.safetensors', 'models/controlnet'),
-              ('https://drive.google.com/file/d/16S-lSU4dqkGfEc6bub0DpCyjkjkDXi4n', 'control_v11f1p_sd15_depth_fp16.safetensors', 'models/controlnet'),
-              ('https://drive.google.com/file/d/1sbEwhjJD_1jW5LP1IORH4WAi1ICYiZfZ', 'mk.safetensors', 'models/loras'),
-              ('https://drive.google.com/file/d/1S4ZEzxxWG4C1pcRK7RvVSr8bQM4ak7q4', 'vae-ft-mse-840000-ema-pruned.ckpt', 'models/vae')]
+    extras = [('https://drive.google.com/uc?id=1uA9lMI_Wk7Fgj2faHOWkliv-QjDzsP_n', 'realisticVisionV60B1_v51VAE.safetensors', 'models/checkpoints'), 
+              ('https://drive.google.com/uc?id=1-sOYJNuCvRB966m30b604sgWvw-boLJU', 'control_v11p_sd15_lineart_fp16.safetensors', 'models/controlnet'),
+              ('https://drive.google.com/uc?id=16S-lSU4dqkGfEc6bub0DpCyjkjkDXi4n', 'control_v11f1p_sd15_depth_fp16.safetensors', 'models/controlnet'),
+              ('https://drive.google.com/uc?id=1sbEwhjJD_1jW5LP1IORH4WAi1ICYiZfZ', 'mk.safetensors', 'models/loras'),
+              ('https://drive.google.com/uc?id=1S4ZEzxxWG4C1pcRK7RvVSr8bQM4ak7q4', 'vae-ft-mse-840000-ema-pruned.ckpt', 'models/vae')]
     for extra in extras:
         if not os.path.exists("{0}/{1}".format(extra[2], extra[1])):
             gdown.download(extra[0], extra[1], quiet=False)
@@ -124,5 +128,5 @@ if __name__ == "__main__":
     comfyUiServer = threading.Thread(target=main.main, daemon=True)
     comfyUiServer.start()
     
-    userCredentialsPath = "./exampleUserCredentials.csv" # os.environ.get('USER_CREDENTIALS')
+    userCredentialsPath = os.environ.get('USER_CREDENTIALS')
     app = FlaskServer(userCredentialsPath)

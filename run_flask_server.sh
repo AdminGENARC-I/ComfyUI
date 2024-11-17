@@ -15,6 +15,10 @@ if ! [ -d "./models/checkpoints/v1-5-pruned-emaonly.ckpt" ]; then
     wget -c https://huggingface.co/runwayml/stable-diffusion-v1-5/resolve/main/v1-5-pruned-emaonly.ckpt -P ./models/checkpoints/
 fi
 
+if ! [ -d "./models/checkpoints/v1-5-pruned.ckpt" ]; then
+    wget -c https://huggingface.co/stable-diffusion-v1-5/stable-diffusion-v1-5/blob/main/v1-5-pruned.ckpt -P ./models/checkpoints/
+fi
+
 if ! [ -d "./custom_nodes/ComfyUI-Manager" ]; then
     git clone https://github.com/ltdrdata/ComfyUI-Manager.git ./custom_nodes/ComfyUI-Manager
 fi
