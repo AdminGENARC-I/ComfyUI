@@ -23,7 +23,7 @@ class FlaskServer:
         
         self.api = ComfyApiWrapper(FlaskServer.LOCAL_SERVER_ADDRESS)    
         self.app = Flask("Flask Server")
-        CORS(self.app)
+        CORS(self.app, resources={r"/*": {"origins": "*"}})
         self.setup_routes()
         self.parse_user_credentials(userCredentialsPath)
         
@@ -40,7 +40,7 @@ class FlaskServer:
 
         @self.app.route("/generateImage", methods=['POST'])
         def generateImage():
-            result = "No such user exists!"
+            result = "Invalid username or password.", 403
             
             userName = request.authorization.get('username')
             password = request.authorization.get('password')
@@ -74,7 +74,7 @@ class FlaskServer:
                     remainingTime = FlaskServer.USER_COOLDOWN - passedTime
                     minutes = int(remainingTime // 60)
                     seconds = int(remainingTime % 60)
-                    result = "You have to wait before making any new requests! Current wait time is {} minutes and {} seconds".format(minutes, seconds)
+                    result = "You have to wait before making any new requests! Current wait time is {} minutes and {} seconds".format(minutes, seconds), 429
             
             return result
 
@@ -110,7 +110,7 @@ class FlaskServer:
             response.headers.set('Content-Disposition', 'attachment', filename='%s.jpg' % image_name)
             return response
         
-        return "No generated image!"
+        return "No generated image!", 500
     
 if __name__ == "__main__":
     extras = [('https://drive.google.com/uc?id=1uA9lMI_Wk7Fgj2faHOWkliv-QjDzsP_n', 'realisticVisionV60B1_v51VAE.safetensors', 'models/checkpoints'), 
