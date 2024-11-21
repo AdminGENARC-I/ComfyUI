@@ -20,6 +20,11 @@ websockets
 comfy_api_simplified
 nest_asyncio
 gdown
+opencv-python
+matplotlib
+scikit-image
+onnxruntime
+onnxruntime-gpu
 
 #non essential dependencies:
 kornia>=0.7.1
