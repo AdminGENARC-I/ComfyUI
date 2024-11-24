@@ -113,7 +113,7 @@ class FlaskServer:
         return "No generated image!", 500
     
 if __name__ == "__main__":
-    extras = [('https://drive.google.com/uc?id=1uA9lMI_Wk7Fgj2faHOWkliv-QjDzsP_n', 'realisticVisionV60B1_v51VAE.safetensors', 'models/checkpoints'), 
+    extras = [# ('https://drive.google.com/uc?id=1uA9lMI_Wk7Fgj2faHOWkliv-QjDzsP_n', 'realisticVisionV60B1_v51VAE.safetensors', 'models/checkpoints'), 
               ('https://drive.google.com/uc?id=1-sOYJNuCvRB966m30b604sgWvw-boLJU', 'control_v11p_sd15_lineart_fp16.safetensors', 'models/controlnet'),
               ('https://drive.google.com/uc?id=16S-lSU4dqkGfEc6bub0DpCyjkjkDXi4n', 'control_v11f1p_sd15_depth_fp16.safetensors', 'models/controlnet'),
               ('https://drive.google.com/uc?id=1sbEwhjJD_1jW5LP1IORH4WAi1ICYiZfZ', 'mk.safetensors', 'models/loras'),
