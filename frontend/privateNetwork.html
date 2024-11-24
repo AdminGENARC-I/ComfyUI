@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GENARC-I</title>
+    <link rel="stylesheet" href="main.css">
+</head>
+<body>
+    <img src="./genarci-logo.png" width="200" height="200" align="center"/>
+    <div class="body-container">
+        <div class="form-container">
+            <div>
+                <label for="username">Kullanıcı Adı:</label>
+                <input type="text" id="username" placeholder="Kullanıcı Adı">
+                <br><br>
+            </div>
+            
+            <div>
+                <label for="usernumber">Kullanıcı Sifresi:</label>
+                <input type="text" id="usernumber" placeholder="Kullanıcı Sifresi">
+                <br><br>
+            </div>
+
+            <div>
+                <label for="imagetype">Resim Tipi Seçin:</label>
+                <select id="imagetype">
+                    <option value="Interior">Interior</option>
+                    <option value="Exterior">Exterior</option>
+                </select>
+                <br><br>
+            </div>
+
+            <div>
+                <label for="buildingtype">Bina Tipi Seçin:</label>
+                <select id="buildingtype">
+                    <option value="Residential Architecture">Residential Architecture</option>
+                    <option value="Refurbishment">Refurbishment</option>
+                    <option value="Cultural Architecture">Cultural Architecture</option>
+                    <option value="Commercial And Offices">Commercial And Offices</option>
+                    <option value="Hospitality Architecture">Hospitality Architecture</option>
+                    <option value="Public Architecture">Public Architecture</option>
+                    <option value="Healthcare Architecture">Healthcare Architecture</option>
+                    <option value="Educational Architecture">Educational Architecture</option>
+                    <option value="Sports Architecture">Sports Architecture</option>
+                    <option value="Religious Architecture">Religious Architecture</option>
+                    <option value="Industrial And Infrastructure">Industrial And Infrastructure</option>
+                    <option value="Landscape And Urbanism">Landscape And Urbanism</option>
+                </select>
+                <br><br>
+            </div>
+
+            <div>
+                <label for="subregion">Bölge Seçin:</label>
+                <select id="subregion">
+                    <option value="Europe">Europe</option>
+                    <option value="North America">North America</option>
+                    <option value="Asia">Asia</option>
+                    <option value="South America">South America</option>
+                    <option value="Africa">Africa</option>
+                    <option value="Oceania">Oceania</option>
+                </select>
+                <br><br>
+            </div>
+            
+            <div>
+                <label for="architect">Ünlü Bir Mimar Seçin:</label>
+                <select id="architect">
+                    <option value="Greg Lynn">Greg Lynn</option>
+                    <option value="Eric Owen Moss">Eric Owen Moss</option>
+                    <option value="Peter Eisenman">Peter Eisenman</option>
+                    <option value="Jeanne Gang">Jeanne Gang</option>
+                    <option value="Jon Jerde">Jon Jerde</option>
+                    <option value="Rafael Vinoly">Rafael Vinoly</option>
+                    <option value="Alejandro Aravena">Alejandro Aravena</option>
+                    <option value="Oscar Niemeyer">Oscar Niemeyer</option>
+                    <option value="Luis Barragan">Luis Barragan</option>
+                    <option value="Frank Gehry">Frank Gehry</option>
+                    <option value="Jacques Herzog">Jacques Herzog</option>
+                    <option value="Pierre de Meuron">Pierre de Meuron</option>
+                    <option value="Peter Zumthor">Peter Zumthor</option>
+                    <option value="Mario Botta">Mario Botta</option>
+                    <option value="Bjarke İngels">Bjarke İngels</option>
+                    <option value="Alvar Aalto">Alvar Aalto</option>
+                    <option value="Eero Saarinen">Eero Saarinen</option>
+                    <option value="Rem Koolhaas">Rem Koolhaas</option>
+                    <option value="Daniel Libeskind">Daniel Libeskind</option>
+                    <option value="Anna Heringer">Anna Heringer</option>
+                    <option value="Glenn Murcutt">Glenn Murcutt</option>
+                    <option value="Nicholas Grimshaw">Nicholas Grimshaw</option>
+                    <option value="Norman Foster">Norman Foster</option>
+                    <option value="Yvonne Farrell">Yvonne Farrell</option> 
+                    <option value="Shelley McNamara">Shelley McNamara</option>
+                    <option value="Jean Nouvel">Jean Nouvel</option>
+                    <option value="Carlo Scarpa">Carlo Scarpa</option>
+                    <option value="Aldo Rossi">Aldo Rossi</option>
+                    <option value="Richard Rogers">Richard Rogers</option>
+                    <option value="Massimiliano Fuksas">Massimiliano Fuksas</option>
+                    <option value="Renzo Piano">Renzo Piano</option>
+                    <option value="Lina Bo Bardi">Lina Bo Bardi</option>
+                    <option value="Ricardo Bofill">Ricardo Bofill</option>
+                    <option value="Enric Ruiz Geli">Enric Ruiz Geli</option>
+                    <option value="Santiago Calatravva">Santiago Calatravva</option>
+                    <option value="Manuel Aires Mateus">Manuel Aires Mateus</option>
+                    <option value="Alvaro Siza Vieira">Alvaro Siza Vieira</option>
+                    <option value="Tadao Ando">Tadao Ando</option>
+                    <option value="Kenzo Tange">Kenzo Tange</option>
+                    <option value="Kengo Kuma">Kengo Kuma</option>
+                    <option value="Kazuyo Seijama">Kazuyo Seijama</option>
+                    <option value="Shigeru Ban">Shigeru Ban</option>
+                    <option value="Kisho Kurokawa">Kisho Kurokawa</option>
+                    <option value="Ieoh Ming Pei">Ieoh Ming Pei</option>
+                    <option value="Wang Shu">Wang Shu</option>
+                    <option value="Toyo Ito">Toyo Ito</option>
+                    <option value="Vo Trong Nghia">Vo Trong Nghia</option>
+                    <option value="Balkrishna Vithaldas Doshi">Balkrishna Vithaldas Doshi</option>
+                    <option value="Diebedo Francis Kere">Diebedo Francis Kere</option>
+                    <option value="Christian de Portzamparc">Christian de Portzamparc</option>
+                    <option value="Zaha Hadid">Zaha Hadid</option>
+                    <option value="Marco Zanuso">Marco Zanuso</option>
+                    <option value="Moshe Safdie">Moshe Safdie</option>
+                    <option value="Sedad Hakkı Eldem">Sedad Hakkı Eldem</option>
+                    <option value="Behruz Çinici">Behruz Çinici</option>
+                    <option value="Şevki Vanlı">Şevki Vanlı</option>
+                </select>
+                <br><br>
+            </div>
+
+            <div>
+                <label for="atmosphere">Atmosfer Seçin:</label>
+                <select id="atmosphere">
+                    <option value="Cloudy">Cloudy</option>
+                    <option value="Evening">Evening</option>
+                    <option value="Morning">Morning</option>
+                    <option value="Overcast">Overcast</option>
+                    <option value="Sunset">Sunset</option>
+                    <option value="Clear">Clear</option>
+                </select>
+                <br><br>
+            </div>
+
+            <div>
+                <label for="ratio">Oran Seçin:</label>
+                <select id="ratio">
+                    <option value="1:1 (Square)">1:1 (Square)</option>"
+                    <option value="3:2 (Horizontal)">3:2 (Horizontal)</option>"
+                    <option value="4:3 (Horizontal)">4:3 (Horizontal)</option>"
+                    <option value="16:9 (Horizontal)">16:9 (Horizontal)</option>"
+                    <option value="19:9 (Cinematic Horizontal)">19:9 (Cinematic Horizontal)</option>"
+                    <option value="3:4 (Vertical)">3:4 (Vertical)</option>"
+                    <option value="2:3 (Vertical)">2:3 (Vertical)</option>"
+                    <option value="9:16 (Vertical)">9:16 (Vertical)</option>"
+                    <option value="2:3 (Vertical)">2:3 (Vertical)</option>"
+                    <option value="9:19 (Vertical)">9:19 (Vertical)</option>"
+                </select>
+                <br><br>
+            </div>
+            
+            <div>
+                <label for="imageUpload">Bir resim yükleyin (Opsiyonel):</label>
+                <input type="file" id="imageUpload" accept="image/*"><br><br>
+            </div>
+            
+            <div>
+                <input type="button" value="Gönder" onclick="sendRequest()">
+            </div>
+        </div>
+
+        <div class="image-container">
+            <h3 align="center">Generated Image:</h3>
+            <img id="generatedImage" class="centered-image"><br><br>
+            <p id="errorMessage" style="color: red; text-align: center; display: none;"></p>
+            <canvas id="imageCanvas" width="512" height="512" style="border: 1px solid black; display: none;"></canvas><br><br>
+            <div id="loadingSpinner" class="spinner" style="display: none;"></div>
+        </div>
+    </div>
+    <div style="height: 5%;"></div>
+    <p style="font-size: 12px;" align="center">This prototype has been developed by Adil Yirmibeş and Umut Polat to provide a generative AI model that is specifically fine-tuned for architecture.</p>
+    <p style="font-size: 8px;" align="center">We would like to thank all the students of Bursa Uludag University, Department of Architecture students:</p>
+    <p style="font-size: 8px;" align="center">(Amir Khalilee, Bedriye Korkmaz, Enes Planalı, Furkan Özcan, Müslüm Gönder, Nurten Sözer, Rutkay Kutal, Saliha Sırrı)</p>
+
+    <script>
+        let imageLoaded = false;
+
+        document.getElementById('imageUpload').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const img = new Image();
+                    img.src = e.target.result;
+                    img.onload = function() {
+                        const canvas = document.getElementById('imageCanvas');
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                        const data = imageData.data;
+                    
+                        for (let i = 0; i < data.length; i += 4) {
+                            const avg = (data[i] + data[i + 1] + data[i + 2]) / 3;
+                            data[i] = avg;
+                            data[i + 1] = avg;
+                            data[i + 2] = avg;
+                        }
+                    
+                        ctx.putImageData(imageData, 0, 0);
+                        imageLoaded = true;
+                    }
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        async function sendRequest() {
+            const spinner = document.getElementById('loadingSpinner');
+            const generatedImage = document.getElementById('generatedImage');
+            const errorMessage = document.getElementById('errorMessage');
+
+            const username = document.getElementById('username').value;
+            const usernumber = document.getElementById('usernumber').value;
+            const imagetype = document.getElementById('imagetype').value;
+            const buildingtype = document.getElementById('buildingtype').value;
+            const subregion = document.getElementById('subregion').value;
+            const architect = document.getElementById('architect').value;
+            const atmosphere = document.getElementById('atmosphere').value;
+            const ratio = document.getElementById('ratio').value;
+
+            spinner.style.display = 'block';
+            generatedImage.style.display = 'none';
+            errorMessage.style.display = 'none';
+            
+            if (!username || !usernumber) {
+                alert("Lütfen kullanıcı adını ve şifresini girin.");
+                spinner.style.display = 'none';
+                return;
+            }
+
+            const canvas = document.getElementById('imageCanvas');
+            let sketch = await new Promise((resolve) => {
+                if (imageLoaded) { 
+                    canvas.toBlob((blob) => {
+                        resolve(blob);
+                    }, 'image/jpeg');
+                }
+                else {
+                    resolve(null);
+                }
+            });
+
+            const data = new FormData();
+            if (sketch) {
+                data.append("sketch", sketch)
+            }
+            data.append("imagetype", imagetype)
+            data.append("buildingtype", buildingtype)
+            data.append("subregion", subregion)
+            data.append("architect", architect)
+            data.append("atmosphere", atmosphere)
+            data.append("ratio", ratio)
+            
+            try {
+                response = await fetch("http://194.168.1.70:80/generateImage", {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': 'Basic ' + btoa(username + ":" + usernumber)
+                    },
+                    body: data
+                })
+
+                const contentType = response.headers.get('Content-Type');
+
+                if (contentType && contentType.includes("image")) {
+                    const result = await response.blob();
+                    const imageUrl = window.URL.createObjectURL(result);
+                    const generatedImage = document.getElementById('generatedImage');
+                    generatedImage.src = imageUrl;
+                    generatedImage.style.display = 'block';
+                } else {
+                    const errorText = await response.text();
+                    const generatedImage = document.getElementById('generatedImage');
+                    const errorMessage = document.getElementById('errorMessage');
+
+                    generatedImage.src = "";
+                    generatedImage.style.display = 'none';
+                    errorMessage.style.display = 'block';
+                    errorMessage.textContent = errorText;
+                }
+            } catch (error) {
+                console.error('Error: ', error);
+            } finally {
+                spinner.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>

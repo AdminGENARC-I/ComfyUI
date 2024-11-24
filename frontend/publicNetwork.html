@@ -171,11 +171,12 @@
             <img id="generatedImage" class="centered-image"><br><br>
             <p id="errorMessage" style="color: red; text-align: center; display: none;"></p>
             <canvas id="imageCanvas" width="512" height="512" style="border: 1px solid black; display: none;"></canvas><br><br>
+            <div id="loadingSpinner" class="spinner" style="display: none;"></div>
         </div>
     </div>
     <div style="height: 5%;"></div>
     <p style="font-size: 12px;" align="center">This prototype has been developed by Adil Yirmibeş and Umut Polat to provide a generative AI model that is specifically fine-tuned for architecture.</p>
-    <p style="font-size: 8px;" align="center">We would like to thank all the students of Bursa University, Department of Architecture students:</p>
+    <p style="font-size: 8px;" align="center">We would like to thank all the students of Bursa Uludag University, Department of Architecture students:</p>
     <p style="font-size: 8px;" align="center">(Amir Khalilee, Bedriye Korkmaz, Enes Planalı, Furkan Özcan, Müslüm Gönder, Nurten Sözer, Rutkay Kutal, Saliha Sırrı)</p>
 
     <script>
@@ -211,6 +212,10 @@
         });
 
         async function sendRequest() {
+            const spinner = document.getElementById('loadingSpinner');
+            const generatedImage = document.getElementById('generatedImage');
+            const errorMessage = document.getElementById('errorMessage');
+
             const username = document.getElementById('username').value;
             const usernumber = document.getElementById('usernumber').value;
             const imagetype = document.getElementById('imagetype').value;
@@ -220,8 +225,13 @@
             const atmosphere = document.getElementById('atmosphere').value;
             const ratio = document.getElementById('ratio').value;
 
+            spinner.style.display = 'block';
+            generatedImage.style.display = 'none';
+            errorMessage.style.display = 'none';
+            
             if (!username || !usernumber) {
                 alert("Lütfen kullanıcı adını ve şifresini girin.");
+                spinner.style.display = 'none';
                 return;
             }
 
@@ -277,6 +287,8 @@
                 }
             } catch (error) {
                 console.error('Error: ', error);
+            } finally {
+                spinner.style.display = 'none';
             }
         }
     </script>
