@@ -5,8 +5,8 @@ __pycache__/
 !/input/example.png
 /models/
 /temp/
-/custom_nodes/ComfyUI-Manager
 /custom_nodes/comfyui_controlnet_aux
+/custom_nodes/ComfyUI*
 /custom_nodes/__pycache__
 extra_model_paths.yaml
 /.vs
@@ -27,3 +27,5 @@ web_custom_versions/
 .venv/*
 *mycreds.txt*
 *client_secrets.json*
+cert.key
+cert.pem

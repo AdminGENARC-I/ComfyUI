@@ -259,7 +259,7 @@
             data.append("ratio", ratio)
             
             try {
-                response = await fetch("http://194.27.127.220:80/generateImage", {
+                response = await fetch("http://194.27.127.220:42/generateImage", {
                     method: 'POST',
                     headers: {
                         'Authorization': 'Basic ' + btoa(username + ":" + usernumber)
