@@ -259,12 +259,13 @@
             data.append("ratio", ratio)
             
             try {
-                response = await fetch("https://194.27.127.220:42/generateImage", {
+                response = await fetch("https://194.27.127.220:80/generateImage", {
                     method: 'POST',
                     headers: {
                         'Authorization': 'Basic ' + btoa(username + ":" + usernumber)
                     },
-                    body: data
+                    body: data,
+                    mode: 'cors'
                 })
 
                 const contentType = response.headers.get('Content-Type');
