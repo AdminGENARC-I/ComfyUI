@@ -7,6 +7,7 @@ import time
 import nest_asyncio
 import gdown
 import shutil
+import random
 
 from comfy_api_simplified import ComfyApiWrapper, ComfyWorkflowWrapper
 
@@ -15,19 +16,17 @@ import main
 class FlaskServer:
     LOCAL_SERVER_ADDRESS = "http://127.0.0.1:8188/"
     LOCAL_CONFIG_PATH = "workflows/adil_workflow_v1.0.0.json"
-    USER_COOLDOWN = 300
+    USER_COOLDOWN = 1
     
     def __init__(self, userCredentialsPath: str):
         self.userCredentials = []
         self.userLastRequestTimes = {}
         
-        self.api = ComfyApiWrapper(FlaskServer.LOCAL_SERVER_ADDRESS)    
+        self.api = ComfyApiWrapper(FlaskServer.LOCAL_SERVER_ADDRESS) 
         self.app = Flask("Flask Server")
         CORS(self.app, resources={r"/*": {"origins": "*"}})
         self.setup_routes()
         self.parse_user_credentials(userCredentialsPath)
-        
-        self.workflow = ComfyWorkflowWrapper(FlaskServer.LOCAL_CONFIG_PATH)
         
         self.app.run(host='0.0.0.0', port=80, ssl_context=('/etc/letsencrypt/live/genarci.com/fullchain.pem', '/etc/letsencrypt/live/genarci.com/privkey.pem'))
         
@@ -94,16 +93,19 @@ class FlaskServer:
         
         return False
     
-    def generate_image(self, sketchImageMetaData, imagetype, buildingtype, subregion, architect, atmosphere, ratio):        
-        self.workflow.set_node_param("Load Image", "image", "{0}/{1}".format(sketchImageMetaData['subfolder'], sketchImageMetaData['name']))
-        self.workflow.set_node_param("Architectural Prompt Generator", "architect", architect)
-        self.workflow.set_node_param("Architectural Prompt Generator", "region", subregion)
-        self.workflow.set_node_param("Architectural Prompt Generator", "building_type", buildingtype)
-        self.workflow.set_node_param("Architectural Prompt Generator", "interior_exterior", imagetype.lower())
-        self.workflow.set_node_param("Architectural Prompt Generator", "atmosphere", atmosphere)
-        self.workflow.set_node_param("Latent Image Resolution", "aspect_ratio", ratio)
+    def generate_image(self, sketchImageMetaData, imagetype, buildingtype, subregion, architect, atmosphere, ratio):
+        workflow = ComfyWorkflowWrapper(FlaskServer.LOCAL_CONFIG_PATH)
         
-        results = self.api.queue_and_wait_images(self.workflow, output_node_title="Save Image")
+        workflow.set_node_param("Load Image", "image", "{0}/{1}".format(sketchImageMetaData['subfolder'], sketchImageMetaData['name']))
+        workflow.set_node_param("Architectural Prompt Generator", "architect", architect)
+        workflow.set_node_param("Architectural Prompt Generator", "region", subregion)
+        workflow.set_node_param("Architectural Prompt Generator", "building_type", buildingtype)
+        workflow.set_node_param("Architectural Prompt Generator", "interior_exterior", imagetype.lower())
+        workflow.set_node_param("Architectural Prompt Generator", "atmosphere", atmosphere)
+        workflow.set_node_param("Latent Image Resolution", "aspect_ratio", ratio)
+        workflow.set_node_param("SamplerCustom", "noise_seed", random.randint(0, 0xFFFFFFFFFFFFFFFF))
+        
+        results = self.api.queue_and_wait_images(workflow, output_node_title="Save Image")
         for image_name, image_data in results.items():
             response = make_response(image_data)
             response.headers.set('Content-Type', 'image/jpeg')
@@ -113,8 +115,7 @@ class FlaskServer:
         return "No generated image!", 500
     
 if __name__ == "__main__":
-    extras = [# ('https://drive.google.com/uc?id=1uA9lMI_Wk7Fgj2faHOWkliv-QjDzsP_n', 'realisticVisionV60B1_v51VAE.safetensors', 'models/checkpoints'), 
-              ('https://drive.google.com/uc?id=1-sOYJNuCvRB966m30b604sgWvw-boLJU', 'control_v11p_sd15_lineart_fp16.safetensors', 'models/controlnet'),
+    extras = [('https://drive.google.com/uc?id=1-sOYJNuCvRB966m30b604sgWvw-boLJU', 'control_v11p_sd15_lineart_fp16.safetensors', 'models/controlnet'),
               ('https://drive.google.com/uc?id=16S-lSU4dqkGfEc6bub0DpCyjkjkDXi4n', 'control_v11f1p_sd15_depth_fp16.safetensors', 'models/controlnet'),
               ('https://drive.google.com/uc?id=1sbEwhjJD_1jW5LP1IORH4WAi1ICYiZfZ', 'mk.safetensors', 'models/loras'),
               ('https://drive.google.com/uc?id=1S4ZEzxxWG4C1pcRK7RvVSr8bQM4ak7q4', 'vae-ft-mse-840000-ema-pruned.ckpt', 'models/vae')]

@@ -16,7 +16,7 @@ if ! [ -d "./models/checkpoints/v1-5-pruned-emaonly.ckpt" ]; then
 fi
 
 if ! [ -d "./models/checkpoints/v1-5-pruned.ckpt" ]; then
-    wget -c https://huggingface.co/stable-diffusion-v1-5/stable-diffusion-v1-5/blob/main/v1-5-pruned.ckpt -P ./models/checkpoints/
+    wget -c https://huggingface.co/stable-diffusion-v1-5/stable-diffusion-v1-5/resolve/main/v1-5-pruned.ckpt -P ./models/checkpoints/
 fi
 
 if ! [ -d "./custom_nodes/ComfyUI-Manager" ]; then
